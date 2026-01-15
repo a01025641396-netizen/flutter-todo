@@ -14,6 +14,4 @@ class ToDoEntity {
     //완료여부
     required this.isDone,
   });
-
-  void add(ToDoEntity toDoEntity) {}
 }
