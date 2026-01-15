@@ -21,6 +21,17 @@ class HomeViewModel extends Notifier<HomeState> {
     state.todoList.add(todo);
     state = HomeState(state.todoList);
   }
+
+  void isDones(ToDoEntity todo) {
+    todo.isDone = !todo.isDone;
+
+    state = HomeState(state.todoList);
+  }
+
+  void isFavorites(ToDoEntity todo) {
+    todo.isFavorite = !todo.isFavorite;
+    state = HomeState(state.todoList);
+  }
 }
 
 //뷰모델 관리자 만들기

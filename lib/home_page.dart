@@ -2,24 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/add_todo_modal.dart';
 import 'package:flutter_application_2/data.dart';
 import 'package:flutter_application_2/empty.dart';
+import 'package:flutter_application_2/home_view_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerWidget {
   @override
-  State<HomePage> createState() => _HomePageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final homeState = ref.watch(HomeViewModelProvider);
 
-class _HomePageState extends State<HomePage> {
-  List<ToDoEntity> todoList = [];
-  //에드두드모달에서 만든 두드엔티티를 저장할수있는 함수 만들기
-
-  void saveToDo(ToDoEntity todo) {
-    setState(() {
-      todoList.add(todo);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -32,12 +22,12 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.grey,
 
       // 투드리스트가 비어있을때는 엠티위젯 비어있지안을때는 리스트뷰로 투드리스트보여주기
-      body: todoList.isEmpty
+      body: homeState.todoList.isEmpty
           ? Empty()
           : ListView.builder(
-              itemCount: todoList.length,
+              itemCount: homeState.todoList.length,
               itemBuilder: (context, index) {
-                ToDoEntity todo = todoList[index];
+                ToDoEntity todo = homeState.todoList[index];
                 return Padding(
                   padding: const EdgeInsetsGeometry.only(left: 20, right: 20),
 
@@ -53,7 +43,12 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         SizedBox(width: 12),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            final viewModel = ref.read(
+                              HomeViewModelProvider.notifier,
+                            );
+                            viewModel.isDones(todo);
+                          },
                           icon: Icon(
                             !todo.isDone ? Icons.circle : Icons.check_circle,
                           ),
@@ -69,9 +64,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Spacer(),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            final viewModel = ref.read(
+                              HomeViewModelProvider.notifier,
+                            );
+                            viewModel.isFavorites(todo);
+                          },
                           icon: Icon(
-                            todo.isDone ? Icons.star_border : Icons.star,
+                            todo.isFavorite ? Icons.star_border : Icons.star,
                           ),
                         ),
                         SizedBox(width: 12),
@@ -102,7 +102,8 @@ class _HomePageState extends State<HomePage> {
           showModalBottomSheet(
             context: context,
             builder: (context) {
-              return AddTodo(addtodo: saveToDo);
+              final viewModel = ref.read(HomeViewModelProvider.notifier);
+              return AddTodo(addtodo: viewModel.saveToDo);
             },
           );
         },

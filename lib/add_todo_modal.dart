@@ -64,8 +64,8 @@ class _AddTodoState extends State<AddTodo> {
                       isFavorite: false,
                       isDone: false,
                     );
-                    print(todo.title);
-                    print(todo.description);
+                    // 1번 파이어 페이스 콘솔들어가서 프로젝트 만들기
+                    //2번 플러터 프로젝트에 파이어 베이스 연동하기
                     widget.addtodo(todo);
                     Navigator.pop(context);
                   },
